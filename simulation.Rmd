@@ -1,7 +1,13 @@
 ---
 title: 'Statistical Inference: Simulating Exponential Distributions'
 author: "Henrique Souza (github.com/htssouza)"
-output: pdf_document
+output:
+  pdf_document:
+    pandoc_args:
+    - +RTS
+    - -K64m
+    - -RTS
+  html_document: default
 ---
 
 # Overview
@@ -23,6 +29,9 @@ Now lets generate some sample values and plot their histogram.
 
 ```{r echo = TRUE}
 sample <- rexp(40, lambda)
+```
+
+```{r echo = FALSE}
 hist(sample,
      main = "Histogram of a sample exponential distribution",
      xlab = "Sample values",
@@ -35,6 +44,8 @@ hist(sample,
 ```{r echo = TRUE}
 sample_mean <- mean(sample)
 theoretical_mean <- 1 / lambda
+sample_mean
+theoretical_mean
 ```
 
 You can see that their values is pretty close.
@@ -44,6 +55,7 @@ Let's test with a larger sample size (1000) and see if it gets even closer:
 ```{r echo = TRUE}
 larger_sample <- rexp(1000, lambda)
 larger_sample_mean <- mean(larger_sample)
+larger_sample_mean
 ```
 
 It is closer to the theoretical value.
@@ -55,36 +67,35 @@ Let's compute the sd of our sample.
 ```{r echo = TRUE}
 sample_sd <- sd(sample)
 theoretical_sd <- 1 / lambda
+sample_sd
+theoretical_sd
 ```
 
-Similar but quite far from the expected value.
+Not so close to the expected value.
 
 Let's now repeat the comparison with the larger sample.
 
 ```{r echo = TRUE}
 larger_sample_sd <- sd(larger_sample)
+larger_sample_sd
 ```
 
 Which is much better.
 
 # Distribution
 
-Computing and ploting the histogram of a thousand exponential distributions.
+Computing a thousand exponential distributions and the same number of normal
+distributions.
 
 ```{r echo = TRUE}
 means = NULL
 for (i in 1 : 1000) means = c(means, mean(rexp(40, lambda)))
-hist(means,
-     main = "Histogram of mean of samples of exponential distributions",
-     xlab = "Means",
-     col = c("red"),
-     breaks = 20)
+ndist <- rnorm(1000, mean = mean(means), sd = sd(means))
 ```
 
-Plotting that with a normal distribution with the same mean and standard deviation.
+Plotting both so they can be compared.
 
-```{r echo = TRUE}
-ndist <- rnorm(1000, mean = mean(means), sd = sd(means))
+```{r echo=FALSE}
 
 data <- data.frame(value = means)
 data$type <- "expotential"
