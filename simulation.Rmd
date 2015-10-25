@@ -1,0 +1,105 @@
+---
+title: 'Statistical Inference: Simulating Exponential Distributions'
+author: "Henrique Souza (github.com/htssouza)"
+output: pdf_document
+---
+
+# Overview
+
+This report is intended to investigate the exponential distribution in R
+and compare it with the Central Limit Theorem (CLT).
+
+# Simulations
+
+For all the simulations lambda will be equal to 0.2.
+A seed will also be set.
+
+```{r echo = TRUE}
+lambda <- 0.2
+set.seed(123456)
+```
+
+Now lets generate some sample values and plot their histogram.
+
+```{r echo = TRUE}
+sample <- rexp(40, lambda)
+hist(sample,
+     main = "Histogram of a sample exponential distribution",
+     xlab = "Sample values",
+     col = c("red"),
+     breaks = 10)
+```
+
+# Sample Mean versus Theoretical Mean
+
+```{r echo = TRUE}
+sample_mean <- mean(sample)
+theoretical_mean <- 1 / lambda
+```
+
+You can see that their values is pretty close.
+
+Let's test with a larger sample size (1000) and see if it gets even closer:
+
+```{r echo = TRUE}
+larger_sample <- rexp(1000, lambda)
+larger_sample_mean <- mean(larger_sample)
+```
+
+It is closer to the theoretical value.
+
+# Sample Variance versus Theoretical Variance
+
+Let's compute the sd of our sample.
+
+```{r echo = TRUE}
+sample_sd <- sd(sample)
+theoretical_sd <- 1 / lambda
+```
+
+Similar but quite far from the expected value.
+
+Let's now repeat the comparison with the larger sample.
+
+```{r echo = TRUE}
+larger_sample_sd <- sd(larger_sample)
+```
+
+Which is much better.
+
+# Distribution
+
+Computing and ploting the histogram of a thousand exponential distributions.
+
+```{r echo = TRUE}
+means = NULL
+for (i in 1 : 1000) means = c(means, mean(rexp(40, lambda)))
+hist(means,
+     main = "Histogram of mean of samples of exponential distributions",
+     xlab = "Means",
+     col = c("red"),
+     breaks = 20)
+```
+
+Plotting that with a normal distribution with the same mean and standard deviation.
+
+```{r echo = TRUE}
+ndist <- rnorm(1000, mean = mean(means), sd = sd(means))
+
+data <- data.frame(value = means)
+data$type <- "expotential"
+data <- rbind(data, data.frame(value = ndist, type = rep("normal", length(ndist))))
+
+library(ggplot2)
+ggplot(data, aes(x=value, fill=type)) +
+    geom_histogram(
+      binwidth=.5,
+      alpha=.5,
+      position="identity",
+      breaks=seq(
+        min(data$value),
+        max(data$value),
+        by=((max(data$value) - min(data$value))/20)
+        )
+      )
+```
