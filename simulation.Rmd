@@ -48,7 +48,7 @@ sample_mean
 theoretical_mean
 ```
 
-You can see that their values is pretty close.
+You can see that their values are pretty close.
 
 Let's test with a larger sample size (1000) and see if it gets even closer:
 
@@ -58,7 +58,7 @@ larger_sample_mean <- mean(larger_sample)
 larger_sample_mean
 ```
 
-It is closer to the theoretical value.
+Theyr are not even closer.
 
 # Sample Variance versus Theoretical Variance
 
