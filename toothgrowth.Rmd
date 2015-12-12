@@ -1,0 +1,51 @@
+---
+title: 'Statistical Inference: Tooth Growth Analysis'
+author: "Henrique Souza (github.com/htssouza)"
+output:
+  pdf_document:
+    pandoc_args:
+    - +RTS
+    - -K64m
+    - -RTS
+  html_document: default
+---
+
+# Goals
+
+1-) Load the ToothGrowth data and perform some basic exploratory data analyses 
+2-) Provide a basic summary of the data
+3-) Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+4-) State your conclusions and the assumptions needed for your conclusions
+
+# 1-) Load the ToothGrowth data and perform some basic exploratory data analyses 
+
+```{r echo = TRUE}
+# Load data
+data(ToothGrowth)
+
+# Data summary
+str(ToothGrowth)
+
+# A small sample of the data
+head(ToothGrowth)
+```
+
+# 2-) Provide a basic summary of the data.
+
+Dose is a factor (few different valyes) so make the preprocessing conversion:
+
+```{r echo = TRUE}
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+```
+
+Current data as a box-plot:
+
+```{r echo = TRUE}
+library("lattice")
+bwplot(len ~ dose | supp,data=ToothGrowth)
+```
+
+# 3-) Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+
+
