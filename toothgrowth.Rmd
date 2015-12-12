@@ -38,14 +38,46 @@ Dose is a factor (few different valyes) so make the preprocessing conversion:
 ToothGrowth$dose <- as.factor(ToothGrowth$dose)
 ```
 
-Current data as a box-plot:
+Plotting some histograms:
 
 ```{r echo = TRUE}
-library("lattice")
-bwplot(len ~ dose | supp,data=ToothGrowth)
+library(plyr)
+library(ggplot2)
+qplot(
+  len,
+  data = ToothGrowth,
+  facets = .~supp~dose,
+  geom="histogram")
 ```
 
 # 3-) Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
 
+Summarizing data to compute confidence intervals (using Student T interval):
+
+```{r echo = TRUE}
+summaries <- ddply(ToothGrowth, .(supp, dose), summarize, mean = mean(len), sd = sd(len), n = length(len))
+summaries
+```
+
+Computing confidence intervals (95% of confidence):
+
+```{r echo = TRUE}
+summaries$min <- summaries$mean - (qt(.975, (summaries$n-1) * summaries$sd / sqrt(summaries$n)))
+summaries$max <- summaries$mean + (qt(.975, (summaries$n-1) * summaries$sd / sqrt(summaries$n)))
+summaries
+```
+
+# 4-) Conclusions
+
+Based on the summary above we can say (with 95% of sure that):
+
+- lens when using OJ (.5 dose) > VC (.5 dose)
+- lens when using OJ (1.0 dose) > VC (1.0 dose)
+- lens when using 2.0 of both OJ and VC are similar/equivalent
+
+The assumptions are:
+
+- current dataset (small, with only 60 rows)
+- 95% of confidence
 
 
