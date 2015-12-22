@@ -47,6 +47,7 @@ qplot(
   len,
   data = ToothGrowth,
   facets = .~supp~dose,
+  binwidth = 1,
   geom="histogram")
 ```
 
@@ -67,13 +68,26 @@ summaries$max <- summaries$mean + (qt(.975, (summaries$n-1) * summaries$sd / sqr
 summaries
 ```
 
+Plotting these intervals:
+
+```{r echo = TRUE}
+gg <- ggplot(summaries)
+gg <- gg + geom_crossbar(
+  aes(ymin = min, ymax = max, x = supp, y = min),
+  fill = "blue",
+  fatten = 0
+  )
+gg <- gg + facet_wrap(~dose)
+gg
+```
+
 # 4-) Conclusions
 
 Based on the summary above we can say (with 95% of sure that):
 
-- lens when using OJ (.5 dose) > VC (.5 dose)
-- lens when using OJ (1.0 dose) > VC (1.0 dose)
-- lens when using 2.0 of both OJ and VC are similar/equivalent
+- lengths when using OJ (.5 dose) > VC (.5 dose)
+- lengths when using OJ (1.0 dose) > VC (1.0 dose)
+- lengths when using 2.0 of both OJ and VC are similar/equivalent
 
 The assumptions are:
 
