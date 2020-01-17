@@ -2,12 +2,12 @@
 title: 'Statistical Inference: Tooth Growth Analysis'
 author: "Henrique Souza (github.com/htssouza)"
 output:
+  html_document: default
   pdf_document:
     pandoc_args:
     - +RTS
     - -K64m
     - -RTS
-  html_document: default
 ---
 
 # Goals
@@ -32,23 +32,16 @@ head(ToothGrowth)
 
 # 2-) Provide a basic summary of the data.
 
-Dose is a factor (few different valyes) so make the preprocessing conversion:
+Comparing supplement results by dose:
 
-```{r echo = TRUE}
-ToothGrowth$dose <- as.factor(ToothGrowth$dose)
-```
-
-Plotting some histograms:
-
-```{r echo = TRUE}
-library(plyr)
+```{r echo = FALSE}
 library(ggplot2)
-qplot(
-  len,
-  data = ToothGrowth,
-  facets = .~supp~dose,
-  binwidth = 1,
-  geom="histogram")
+data <- data.frame(len = ToothGrowth$len, supp = ToothGrowth$supp, dose = as.factor(ToothGrowth$dose))
+g <- ggplot(data, aes(x = dose, y = len, group = dose))
+g <- g + labs(title = "Comparing supplements", x = "dose", y = "tooth length")
+g <- g + geom_boxplot(aes(fill = dose))
+g <- g+ facet_grid(. ~ supp)
+g
 ```
 
 # 3-) Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
@@ -56,7 +49,8 @@ qplot(
 Summarizing data to compute confidence intervals (using Student T interval):
 
 ```{r echo = TRUE}
-summaries <- ddply(ToothGrowth, .(supp, dose), summarize, mean = mean(len), sd = sd(len), n = length(len))
+library(plyr)
+summaries <- ddply(data, .(supp, dose), summarize, mean = mean(len), sd = sd(len), n = length(len))
 summaries
 ```
 
@@ -71,14 +65,14 @@ summaries
 Plotting these intervals:
 
 ```{r echo = TRUE}
-gg <- ggplot(summaries)
-gg <- gg + geom_crossbar(
-  aes(ymin = min, ymax = max, x = supp, y = min),
-  fill = "blue",
+g <- ggplot(summaries)
+g <- g + labs(title = "Comparing length (confidence intervals) by dose", x = "supplement", y = "tooth length")
+g <- g + geom_crossbar(
+  aes(ymin = min, ymax = max, x = supp, y = min, fill = dose),
   fatten = 0
   )
-gg <- gg + facet_wrap(~dose)
-gg
+g <- g + facet_wrap(~dose)
+g
 ```
 
 # 4-) Conclusions
